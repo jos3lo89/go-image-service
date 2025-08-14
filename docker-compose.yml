@@ -1,0 +1,13 @@
+services:
+  go-image-server:
+    build: .
+    restart: always
+    ports:
+      - "8080:8080"
+    volumes:
+      - go_image_data:/app/uploads
+    environment:
+      - GIN_MODE=release
+
+volumes:
+  go_image_data: {}
