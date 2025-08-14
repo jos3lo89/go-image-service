@@ -32,7 +32,11 @@ func HandleUploadFile(c *fiber.Ctx) error {
 	}
 
 	fileURL := fmt.Sprintf("%s/uploads/%s", c.BaseURL(), uniqueFilename)
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"message": "Archivo subido con éxito", "url": fileURL, "id": uniqueFilename})
+	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+		"message":  "Archivo subido con éxito",
+		"id":       uniqueFilename,
+		"url-full": fileURL,
+		"url":      "/uploads/" + uniqueFilename})
 }
 
 func HandleDeleteFile(c *fiber.Ctx) error {
