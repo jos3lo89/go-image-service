@@ -1,13 +1,28 @@
 services:
-  go-image-server:
+  # El nombre de nuestro servicio. Puedes llamarlo como prefieras.
+  go-image-service:
+    # 'build: .' le indica a Docker Compose que construya la imagen
+    # usando el Dockerfile que se encuentra en el directorio actual.
     build: .
-    restart: always
+    # Reinicia el contenedor automáticamente a menos que se detenga manualmente.
+    # Esto asegura que si la app falla, se reiniciará sola.
+    restart: unless-stopped
+    # Mapea el puerto 8080 del host (tu VPS) al puerto 8080 del contenedor.
+    # Así es como Dokploy podrá dirigir el tráfico a tu aplicación.
     ports:
       - "8080:8080"
+    # Carga las variables de entorno desde el archivo .env.
+    env_file:
+      - .env
+    # Aquí está la clave para la persistencia de datos.
     volumes:
-      - go_image_data:/app/uploads
-    environment:
-      - GIN_MODE=release
+      # Mapeamos un volumen nombrado 'uploads-data' al directorio '/app/uploads' dentro del contenedor.
+      # '/app/uploads' es la ruta que definimos en nuestro Dockerfile.
+      # Todo lo que la app guarde en '/app/uploads' se almacenará en el volumen 'uploads-data' en el host.
+      # Este volumen no se elimina cuando actualizas o redespliegas tu aplicación.
+      - uploads-data:/app/uploads
 
+# Aquí declaramos el volumen nombrado que usamos arriba.
+# Docker se encargará de crearlo y gestionarlo en tu VPS.
 volumes:
-  go_image_data: {}
+  uploads-data:
