@@ -10,7 +10,7 @@ func SetupImageRoutes(app *fiber.App) {
 	api := app.Group("/api/v1")
 	api.Post("/upload", handlers.HandleUploadFile)
 	api.Delete("/image/:filename", handlers.HandleDeleteFile)
-	api.Get("/dowload-all", handlers.HandleDownloadAll)
+	api.Get("/dowload", handlers.HandleDownloadAll)
 	api.Get("/images", handlers.HandleListFiles)
 
 }
