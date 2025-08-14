@@ -25,6 +25,8 @@ func main() {
 	app.Use(cors.New())
 	app.Use(logger.New())
 
+	app.Static("/uploads", config.AppConfig.UploadDir)
+
 	routes.SetupImageRoutes(app)
 
 	log.Fatal(app.Listen(":" + config.AppConfig.Port))
