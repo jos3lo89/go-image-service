@@ -3,6 +3,7 @@ package database
 
 import (
 	"jos3lo89/go-image-service/config"
+	"jos3lo89/go-image-service/models"
 	"log"
 
 	"gorm.io/driver/sqlite"
@@ -20,6 +21,6 @@ func ConnectDB() {
 	}
 
 	log.Println("Conexión a la base de datos exitosa.")
-	db.AutoMigrate()
+	db.AutoMigrate(&models.User{}, models.Image{})
 	log.Println("Migración de la base de datos completada.")
 }
