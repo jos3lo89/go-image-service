@@ -19,9 +19,8 @@ func HandleUploadFile(c *fiber.Ctx) error {
 	}
 
 	ext := filepath.Ext(file.Filename)
-
+	// TODO: verificar la extencion del archico que sea  jpg png webp
 	uniqueFilename := fmt.Sprintf("%d-%s%s", time.Now().UnixNano(), "upload", ext)
-
 	dstPath := filepath.Join(config.AppConfig.UploadDir, uniqueFilename)
 
 	if err := c.SaveFile(file, dstPath); err != nil {
@@ -49,10 +48,11 @@ func HandleDeleteFile(c *fiber.Ctx) error {
 	if err := os.Remove(filePath); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"success": false, "message": "Error al eliminar el archivo."})
 	}
-	return c.JSON(fiber.Map{"success": true, "message": fmt.Sprintf("Archivo '%s' eliminado con éxito.", filename)})
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"success": true, "message": fmt.Sprintf("Archivo '%s' eliminado con éxito.", filename)})
 }
 
 func HandleListFiles(c *fiber.Ctx) error {
+	// TODO: devolver en json todas la imanges sus nombres [{image: "werq.jpg"}]
 	files, err := os.ReadDir(config.AppConfig.UploadDir)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"message": "No se pudo leer el directorio de imágenes."})
