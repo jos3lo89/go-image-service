@@ -1,3 +1,4 @@
+// Package handlers: controladores de las imagenes
 package handlers
 
 import (
@@ -16,7 +17,6 @@ import (
 
 func HandleUploadFile(c *fiber.Ctx) error {
 	file, err := c.FormFile("image")
-
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": "Imagen requerida."})
 	}
@@ -36,7 +36,8 @@ func HandleUploadFile(c *fiber.Ctx) error {
 		"message": "Archivo subido con éxito",
 		"id":      uniqueFilename,
 		"urlFull": fileURL,
-		"url":     "/uploads/" + uniqueFilename})
+		"url":     "/uploads/" + uniqueFilename,
+	})
 }
 
 func HandleDeleteFile(c *fiber.Ctx) error {
@@ -68,7 +69,6 @@ func HandleDownloadAll(c *fiber.Ctx) error {
 		}
 
 		fileToZip, err := os.Open(path)
-
 		if err != nil {
 			return err
 		}
@@ -83,7 +83,6 @@ func HandleDownloadAll(c *fiber.Ctx) error {
 		_, err = io.Copy(zipFile, fileToZip)
 		return err
 	})
-
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"message": "Error al crear el archivo ZIP."})
 	}

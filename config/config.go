@@ -1,3 +1,4 @@
+// Package config: maneja la carga de las variables de entorno
 package config
 
 import (
