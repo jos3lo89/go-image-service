@@ -12,6 +12,10 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+type ImageResponse struct {
+	Image string `json:"image"`
+}
+
 func HandleUploadFile(c *fiber.Ctx) error {
 	file, err := c.FormFile("image")
 	if err != nil {
@@ -52,16 +56,18 @@ func HandleDeleteFile(c *fiber.Ctx) error {
 }
 
 func HandleListFiles(c *fiber.Ctx) error {
-	// TODO: devolver en json todas la imanges sus nombres [{image: "werq.jpg"}]
 	files, err := os.ReadDir(config.AppConfig.UploadDir)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"message": "No se pudo leer el directorio de imágenes."})
 	}
-	var filenames []string
+
+	var response []ImageResponse
+
 	for _, file := range files {
 		if !file.IsDir() {
-			filenames = append(filenames, file.Name())
+			response = append(response, ImageResponse{Image: file.Name()})
 		}
 	}
-	return c.JSON(fiber.Map{"files": filenames})
+
+	return c.JSON(response)
 }
