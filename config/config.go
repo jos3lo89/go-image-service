@@ -12,8 +12,6 @@ type Config struct {
 	Port        string `envconfig:"PORT" required:"true"`
 	UploadDir   string `envconfig:"UPLOAD_DIR" required:"true"`
 	MaxFileSize string `envconfig:"MAX_FILE_SIZE" required:"true"`
-	DBPath      string `envconfig:"DB_PATH" required:"true" default:"./images.db"`
-	JWTSecret   string `envconfig:"JWT_SECRET" required:"true"`
 }
 
 var AppConfig Config
