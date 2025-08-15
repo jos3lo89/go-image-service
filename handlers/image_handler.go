@@ -16,14 +16,29 @@ type ImageResponse struct {
 	Image string `json:"image"`
 }
 
+var allowedExtensions = map[string]bool{
+	".jpg":  true,
+	".jpeg": true,
+	".png":  true,
+	".webp": true,
+}
+
 func HandleUploadFile(c *fiber.Ctx) error {
 	file, err := c.FormFile("image")
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": "Imagen requerida."})
 	}
 
-	ext := filepath.Ext(file.Filename)
-	// TODO: verificar la extencion del archico que sea  jpg png webp
+	// ext := filepath.Ext(file.Filename)
+
+	ext := strings.ToLower(filepath.Ext(file.Filename))
+
+	if !allowedExtensions[ext] {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Formato de archivo no permitido. Solo se aceptan: jpg, png, webp.",
+		})
+	}
+
 	uniqueFilename := fmt.Sprintf("%d-%s%s", time.Now().UnixNano(), "upload", ext)
 	dstPath := filepath.Join(config.AppConfig.UploadDir, uniqueFilename)
 
