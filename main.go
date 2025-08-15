@@ -11,13 +11,14 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/gofiber/template/html/v2"
 	"golang.org/x/crypto/bcrypt"
 )
 
 func main() {
 	config.Init()
 
-	database.ConnectDB()
+	database.ConnectDB(config.AppConfig.DBPath)
 
 	// Crear usuario admin si no existe
 	createAdminUser()
@@ -26,17 +27,22 @@ func main() {
 		log.Fatalf("Error al crear el directorio de subidas: %v", err)
 	}
 
+	engine := html.New("./views", ".html")
+
 	app := fiber.New(fiber.Config{
 		BodyLimit: 10 * 1024 * 1024,
+		Views:     engine,
 	})
 
 	app.Use(cors.New())
 	app.Use(logger.New())
 
-	app.Static("/public", "./public")
+	app.Static("/static", "./static")
 	app.Static("/uploads", config.AppConfig.UploadDir)
 
+	routes.SetupPageRoutes(app)
 	routes.SetupImageRoutes(app)
+	routes.SetupAuthRoutes(app)
 
 	log.Fatal(app.Listen(":" + config.AppConfig.Port))
 }
