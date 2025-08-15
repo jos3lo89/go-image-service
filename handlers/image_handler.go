@@ -2,10 +2,7 @@
 package handlers
 
 import (
-	"archive/zip"
-	"bytes"
 	"fmt"
-	"io"
 	"jos3lo89/go-image-service/config"
 	"os"
 	"path/filepath"
@@ -53,46 +50,6 @@ func HandleDeleteFile(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"success": false, "message": "Error al eliminar el archivo."})
 	}
 	return c.JSON(fiber.Map{"success": true, "message": fmt.Sprintf("Archivo '%s' eliminado con éxito.", filename)})
-}
-
-func HandleDownloadAll(c *fiber.Ctx) error {
-	buf := new(bytes.Buffer)
-	zipWriter := zip.NewWriter(buf)
-
-	err := filepath.Walk(config.AppConfig.UploadDir, func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			return err
-		}
-
-		if info.IsDir() {
-			return nil
-		}
-
-		fileToZip, err := os.Open(path)
-		if err != nil {
-			return err
-		}
-
-		defer fileToZip.Close()
-
-		zipFile, err := zipWriter.Create(info.Name())
-		if err != nil {
-			return err
-		}
-
-		_, err = io.Copy(zipFile, fileToZip)
-		return err
-	})
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"message": "Error al crear el archivo ZIP."})
-	}
-
-	zipWriter.Close()
-
-	c.Set("Content-Type", "application/zip")
-	c.Set("Content-Disposition", `attachment; filename="images-backup.zip"`)
-
-	return c.Send(buf.Bytes())
 }
 
 func HandleListFiles(c *fiber.Ctx) error {
