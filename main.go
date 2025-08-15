@@ -22,11 +22,17 @@ func main() {
 		BodyLimit: 10 * 1024 * 1024,
 	})
 
-	app.Use(cors.New())
+	app.Use(cors.New(cors.Config{
+		AllowOrigins: config.AppConfig.URLClient,
+	}))
+
 	app.Use(logger.New())
 
 	app.Static("/uploads", config.AppConfig.UploadDir)
 
+	app.Get("/", func(c *fiber.Ctx) error {
+		return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "🖕"})
+	})
 	routes.SetupImageRoutes(app)
 
 	log.Fatal(app.Listen(":" + config.AppConfig.Port))

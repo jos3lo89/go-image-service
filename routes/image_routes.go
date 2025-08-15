@@ -1,3 +1,4 @@
+// Package routes: rutas de las imagenes
 package routes
 
 import (
@@ -12,5 +13,4 @@ func SetupImageRoutes(app *fiber.App) {
 	api.Delete("/image/:filename", handlers.HandleDeleteFile)
 	api.Get("/download", handlers.HandleDownloadAll)
 	api.Get("/images", handlers.HandleListFiles)
-
 }
