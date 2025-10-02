@@ -19,6 +19,6 @@ COPY .env ./.env
 
 RUN mkdir -p /app/uploads
 
-EXPOSE 8080
+EXPOSE 8000
 
 CMD ["/app/main"]
