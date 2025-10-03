@@ -31,7 +31,12 @@ func main() {
 	app.Static("/uploads", config.AppConfig.UploadDir)
 
 	app.Get("/", func(c *fiber.Ctx) error {
-		return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "🖕"})
+		return c.Status(fiber.StatusOK).JSON(fiber.Map{
+			"message":  "ok",
+			"upload":   "/api/v1/upload",
+			"download": "/api/v1/download",
+			"list":     "/api/v1/images",
+		})
 	})
 	routes.SetupImageRoutes(app)
 
