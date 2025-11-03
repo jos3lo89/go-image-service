@@ -24,6 +24,12 @@ var allowedExtensions = map[string]bool{
 }
 
 func HandleUploadFile(c *fiber.Ctx) error {
+
+	dni := c.FormValue("dni")
+	if dni == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": "DNI requerido."})
+	}
+
 	file, err := c.FormFile("image")
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": "Imagen requerida."})
@@ -39,7 +45,8 @@ func HandleUploadFile(c *fiber.Ctx) error {
 		})
 	}
 
-	uniqueFilename := fmt.Sprintf("%d-%s%s", time.Now().UnixNano(), "upload", ext)
+	// uniqueFilename := fmt.Sprintf("%d-%s%s", time.Now().UnixNano(), "upload", ext)
+	uniqueFilename := fmt.Sprintf("%s-%d%s", dni, time.Now().UnixNano(), ext)
 	dstPath := filepath.Join(config.AppConfig.UploadDir, uniqueFilename)
 
 	if err := c.SaveFile(file, dstPath); err != nil {
@@ -57,16 +64,21 @@ func HandleUploadFile(c *fiber.Ctx) error {
 
 func HandleDeleteFile(c *fiber.Ctx) error {
 	filename := c.Params("filename")
+
 	if strings.Contains(filename, "..") {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"success": false, "message": "Nombre de archivo no válido."})
 	}
+
 	filePath := filepath.Join(config.AppConfig.UploadDir, filename)
+
 	if _, err := os.Stat(filePath); os.IsNotExist(err) {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"success": false, "message": "El archivo no existe."})
 	}
+
 	if err := os.Remove(filePath); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"success": false, "message": "Error al eliminar el archivo."})
 	}
+
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"success": true, "message": fmt.Sprintf("Archivo '%s' eliminado con éxito.", filename)})
 }
 
