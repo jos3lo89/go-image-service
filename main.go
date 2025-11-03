@@ -36,8 +36,10 @@ func main() {
 			"upload":   "/api/v1/upload",
 			"download": "/api/v1/download",
 			"list":     "/api/v1/images",
+			"delete":   "/api/v1/image/:filename",
 		})
 	})
+
 	routes.SetupImageRoutes(app)
 
 	log.Fatal(app.Listen(":" + config.AppConfig.Port))
